@@ -43,18 +43,17 @@ const listFiles = async (req, res) => {
   try {
     const files = await File.find({ owner: req.user._id }).sort({ createdAt: -1 });
 
-    const filesWithUrls = files.map(file => ({
-      ...file.toObject(),
-      downloadUrl: `/download/${file._id}`
-    }));
-
     res.render('home', {
       user: req.user,
-      files: filesWithUrls,
+      files: files.map(file => file.toObject()),
+      loginSuccess: req.session.loginSuccess || false,
       uploadSuccess: req.session.uploadSuccess || false
     });
     
-    req.session.uploadSuccess = false;
+    if (req.session) {
+      req.session.loginSuccess = false;
+      req.session.uploadSuccess = false;
+    }
   } catch (err) {
     res.status(500).render('error', { error: err.message });
   }
@@ -68,15 +67,24 @@ const downloadFile = async (req, res) => {
       throw new Error('File not found');
     }
 
-    // Generate signed URL (valid for 1 hour)
-    const { data: { signedUrl }, error } = await supabase.storage
+    // Get the file data from Supabase
+    const { data, error } = await supabase.storage
       .from('user-files')
-      .createSignedUrl(file.path, 3600);
+      .download(file.path);
 
     if (error) throw error;
 
-    res.redirect(signedUrl);
+    // Set proper headers for file download
+    res.set({
+      'Content-Type': file.mimetype,
+      'Content-Disposition': `attachment; filename="${file.filename}"`,
+      'Content-Length': file.size
+    });
+
+    // Send the file data
+    res.send(await data.arrayBuffer());
   } catch (err) {
+    console.error('Download error:', err);
     res.status(404).render('error', { error: err.message });
   }
 };

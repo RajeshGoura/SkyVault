@@ -154,62 +154,72 @@
     
     /* Modal Styles */
     .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(5px);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-      animation: fadeIn 0.3s ease;
-    }
-    
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-      transform: translateY(0);
-      animation: modalSlideIn 0.4s ease;
-    }
-    
-    .modal-content h3 {
-      margin-bottom: 20px;
-      color: #4a4a4a;
-      text-align: center;
-      font-size: 22px;
-    }
-    
-    .file-drop-area {
-      border: 2px dashed #667eea;
-      border-radius: 10px;
-      padding: 40px;
-      text-align: center;
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: rgba(102, 126, 234, 0.05);
-    }
-    
-    .file-drop-area:hover {
-      background: rgba(102, 126, 234, 0.1);
-    }
-    
-    .file-drop-area input[type="file"] {
-      display: none;
-    }
-    
-    .form-buttons {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-    }
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    animation: modalSlideIn 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* This adds consistent spacing between elements */
+  }
+  
+  .modal-content h3 {
+    margin-bottom: 0; /* Remove the large bottom margin */
+    color: #4a4a4a;
+    text-align: center;
+    font-size: 22px;
+  }
+  
+  .file-drop-area {
+    border: 2px dashed #667eea;
+    border-radius: 10px;
+    padding: 40px 20px; /* Adjusted padding */
+    text-align: center;
+    margin: 0; /* Remove margin-bottom since we're using gap */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(102, 126, 234, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 150px; /* Give it a minimum height */
+  }
+  
+  .file-drop-area:hover {
+    background: rgba(102, 126, 234, 0.1);
+  }
+  
+  .file-drop-area input[type="file"] {
+    display: none;
+  }
+  
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px; /* Add space above buttons */
+  }
+  
     
     .submit-btn {
       flex: 1;
@@ -326,7 +336,7 @@
           <div class="file-item">
             <div class="file-name"><%= file.filename %></div>
             <div class="file-actions">
-              <a href="<%= file.downloadUrl %>" download>Download</a>
+              <a href="/download/<%= file._id %>" download="<%= file.filename %>">Download</a>
             </div>
           </div>
         <% }); %>
@@ -353,49 +363,69 @@
   </div>
 
   <script>
-    function openModal() {
-      document.getElementById('uploadModal').style.display = 'flex';
-    }
+  function openModal() {
+    document.getElementById('uploadModal').style.display = 'flex';
+  }
 
-    function closeModal() {
-      document.getElementById('uploadModal').style.display = 'none';
+  function closeModal() {
+    document.getElementById('uploadModal').style.display = 'none';
+    // Reset the drop area text when closing modal
+    const dropArea = document.querySelector('.file-drop-area');
+    if (dropArea) {
+      dropArea.innerHTML = 'Click here to select a file <input type="file" name="file" required />';
+      setupFileDropArea(); // Reinitialize event listeners
     }
+  }
 
-    // Auto-close notification after 3 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-      const notification = document.querySelector('.notification');
-      if (notification) {
-        setTimeout(() => {
-          notification.style.display = 'none';
-        notification.style.animation = 'fadeOut 0.5s ease forwards';
-        setTimeout(() => notification.remove(), 500);
-        }, 3000);
-      }
+  // Function to setup file drop area event listeners
+  function setupFileDropArea() {
+    const dropArea = document.querySelector('.file-drop-area');
+    if (dropArea) {
+      const fileInput = dropArea.querySelector('input[type="file"]');
+      
+      // Handle file selection via click
+      fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+          dropArea.textContent = this.files[0].name;
+        }
+      });
       
       // Highlight file drop area when file is dragged over
-      const dropArea = document.querySelector('.file-drop-area');
-      if (dropArea) {
-        dropArea.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          dropArea.style.background = 'rgba(102, 126, 234, 0.2)';
-          dropArea.style.borderColor = '#4a4a4a';
-        });
-        
-        dropArea.addEventListener('dragleave', () => {
-          dropArea.style.background = 'rgba(102, 126, 234, 0.05)';
-          dropArea.style.borderColor = '#667eea';
-        });
-        
-        dropArea.addEventListener('drop', (e) => {
-          e.preventDefault();
-          dropArea.style.background = 'rgba(102, 126, 234, 0.05)';
-          dropArea.style.borderColor = '#667eea';
-          const fileInput = dropArea.querySelector('input[type="file"]');
-          fileInput.files = e.dataTransfer.files;
-          dropArea.textContent = `${e.dataTransfer.files[0].name} selected`;
-        });
-      }
-    });
-  </script>
+      dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.style.background = 'rgba(102, 126, 234, 0.2)';
+        dropArea.style.borderColor = '#4a4a4a';
+      });
+      
+      dropArea.addEventListener('dragleave', () => {
+        dropArea.style.background = 'rgba(102, 126, 234, 0.05)';
+        dropArea.style.borderColor = '#667eea';
+      });
+      
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.background = 'rgba(102, 126, 234, 0.05)';
+        dropArea.style.borderColor = '#667eea';
+        fileInput.files = e.dataTransfer.files;
+        dropArea.textContent = e.dataTransfer.files[0].name;
+      });
+    }
+  }
+
+  // Auto-close notification after 3 seconds
+  document.addEventListener('DOMContentLoaded', function() {
+    const notification = document.querySelector('.notification');
+    if (notification) {
+      setTimeout(() => {
+        notification.style.display = 'none';
+        notification.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => notification.remove(), 500);
+      }, 3000);
+    }
+    
+    // Initialize file drop area
+    setupFileDropArea();
+  });
+</script>
 </body>
 </html>
