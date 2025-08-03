@@ -1,67 +1,101 @@
+const File = require('../models/file.model');
 const supabase = require('../config/supabase');
-const multer = require('multer');
-const path = require('path');
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 const uploadFile = async (req, res) => {
-  if (!req.file) return res.status(400).send("No file uploaded");
-
-  const fileName = `${Date.now()}_${req.file.originalname}`;
-
-  const { data, error } = await supabase.storage
-    .from('user-files') 
-    .upload(`uploads/${fileName}`, req.file.buffer, {
-      contentType: req.file.mimetype,
-    });
-
-  if (error) return res.status(500).send("Upload failed: " + error.message);
-
-  // Set success flash message
-  req.session.uploadSuccess = true;
-  res.redirect('/home');
-};
-
-const listFiles = async (req, res) => {
   try {
-    const { data: files, error } = await supabase.storage
+    // First check if file exists
+    if (!req.file) {
+      throw new Error('No file uploaded. Make sure your form has enctype="multipart/form-data"');
+    }
+
+    console.log('Received file:', {
+      name: req.file.originalname,
+      size: req.file.size,
+      type: req.file.mimetype
+    });
+
+    // Create unique filename
+    const fileName = `${Date.now()}_${req.file.originalname}`;
+    const filePath = `users/${req.user._id}/${fileName}`;
+
+    // Upload to Supabase
+    const { error } = await supabase.storage
       .from('user-files')
-      .list('uploads');
+      .upload(filePath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase upload error:', error);
+      throw error;
+    }
 
-    const filesWithUrls = files.map(file => {
-      // Manually construct the URL to ensure correct format
-      const publicUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/user-files/uploads/${file.name}`;
-      
-      return {
-        ...file,
-        downloadUrl: publicUrl,
-        // Alternative method using getPublicUrl()
-        signedUrl: supabase.storage
-          .from('user-files')
-          .getPublicUrl(`uploads/${file.name}`).data.publicUrl
-      };
+    // Save to MongoDB
+    const file = new File({
+      filename: req.file.originalname,
+      path: filePath,
+      size: req.file.size,
+      mimetype: req.file.mimetype,
+      owner: req.user._id
     });
 
-    res.render('home', {
-      files: filesWithUrls,
-      uploadSuccess: req.session.uploadSuccess || false
-    });
+    await file.save();
+    console.log('File saved to database:', file);
+
+    req.session.uploadSuccess = true;
+    res.redirect('/home');
     
-    req.session.uploadSuccess = false;
   } catch (err) {
-    console.error("Error listing files:", err);
-    res.status(500).render('home', {
-      files: [],
-      error: "Error loading files"
+    console.error('Upload error:', err);
+    res.status(500).render('error', { 
+      error: `Upload failed: ${err.message}`
     });
   }
 };
 
+const listFiles = async (req, res) => {
+  try {
+    const files = await File.find({ owner: req.user._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.render('home', {
+      user: req.user,
+      files: files,
+      loginSuccess: req.session.loginSuccess,
+      uploadSuccess: req.session.uploadSuccess
+    });
+  } catch (err) {
+    res.status(500).render('error', { error: err.message });
+  }
+};
+
+const downloadFile = async (req, res) => {
+  try {
+    const file = await File.findOne({ 
+      _id: req.params.id, 
+      owner: req.user._id 
+    });
+
+    if (!file) {
+      throw new Error('File not found');
+    }
+
+    // Get download URL
+    const { data: { signedUrl } } = await supabase.storage
+      .from('user-files')
+      .createSignedUrl(file.path, 3600); // 1 hour expiry
+
+    res.redirect(signedUrl);
+  } catch (err) {
+    console.error('Download error:', err);
+    res.status(404).render('error', { error: err.message });
+  }
+};
+
 module.exports = {
-  upload,
   uploadFile,
-  listFiles
+  listFiles,
+  downloadFile
 };
