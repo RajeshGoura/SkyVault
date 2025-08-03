@@ -17,31 +17,34 @@
     body {
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       min-height: 100vh;
-      padding: 40px 20px;
+      padding: 20px;
       color: #333;
     }
     
     .container {
       max-width: 1200px;
       margin: 0 auto;
+      width: 100%;
     }
     
     /* Header Styles */
     .header {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      margin-bottom: 40px;
-      padding: 20px;
+      margin-bottom: 30px;
+      padding: 15px;
       background: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
+      border-radius: 12px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     }
     
     .header h1 {
       color: #4a4a4a;
       font-weight: 600;
-      font-size: 28px;
+      font-size: 24px;
+      margin-bottom: 15px;
+      text-align: center;
     }
     
     .header h1 span {
@@ -49,7 +52,7 @@
     }
     
     .logout-btn {
-      padding: 12px 24px;
+      padding: 10px 20px;
       background: linear-gradient(to right, #ff416c, #ff4b2b);
       color: white;
       text-decoration: none;
@@ -59,6 +62,9 @@
       box-shadow: 0 4px 10px rgba(255, 75, 43, 0.3);
       border: none;
       cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+      max-width: 200px;
     }
     
     .logout-btn:hover {
@@ -73,27 +79,31 @@
       right: 20px;
       background: #4BB543;
       color: white;
-      padding: 15px 25px;
+      padding: 12px 20px;
       border-radius: 8px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       z-index: 1000;
       animation: slideIn 0.5s ease-out, fadeOut 0.5s ease 2.5s forwards;
+      max-width: 90%;
+      font-size: 14px;
     }
     
     /* Upload Button */
     .upload-btn {
       display: block;
-      margin: 0 auto 30px;
-      padding: 15px 30px;
+      margin: 0 auto 25px;
+      padding: 12px 25px;
       background: linear-gradient(to right, #667eea, #764ba2);
       color: white;
       border: none;
       border-radius: 30px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
       box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      width: 100%;
+      max-width: 300px;
     }
     
     .upload-btn:hover {
@@ -104,24 +114,25 @@
     /* File List */
     .file-list {
       background: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      padding: 20px;
+      border-radius: 12px;
+      padding: 15px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     }
     
     .file-list p {
       text-align: center;
       color: #888;
-      padding: 20px;
+      padding: 15px;
+      font-size: 14px;
     }
     
     .file-item {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
+      flex-direction: column;
+      padding: 12px;
       border-bottom: 1px solid #eee;
       transition: all 0.3s ease;
+      gap: 10px;
     }
     
     .file-item:hover {
@@ -130,21 +141,26 @@
     }
     
     .file-name {
-      flex: 1;
       font-weight: 500;
       color: #444;
       word-break: break-all;
+      font-size: 14px;
+    }
+    
+    .file-actions {
+      align-self: flex-end;
     }
     
     .file-actions a {
-      padding: 8px 16px;
+      padding: 6px 12px;
       background: linear-gradient(to right, #00b09b, #96c93d);
       color: white;
       text-decoration: none;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       transition: all 0.3s ease;
+      display: inline-block;
     }
     
     .file-actions a:hover {
@@ -166,33 +182,34 @@
       justify-content: center;
       align-items: center;
       animation: fadeIn 0.3s ease;
+      padding: 15px;
     }
     
     .modal-content {
       background: white;
-      padding: 40px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 500px;
+      padding: 25px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
       transform: translateY(0);
       animation: modalSlideIn 0.4s ease;
       display: flex;
       flex-direction: column;
-      gap: 30px;
+      gap: 20px;
     }
     
     .modal-content h3 {
       margin-bottom: 0;
       color: #4a4a4a;
       text-align: center;
-      font-size: 22px;
+      font-size: 18px;
     }
     
     .file-drop-area {
       border: 2px dashed #667eea;
-      border-radius: 10px;
-      padding: 40px 20px;
+      border-radius: 8px;
+      padding: 30px 15px;
       text-align: center;
       margin: 0;
       cursor: pointer;
@@ -202,7 +219,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      min-height: 150px;
+      min-height: 120px;
       position: relative;
     }
     
@@ -216,14 +233,13 @@
     
     .form-buttons {
       display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      margin-top: 20px;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
     }
     
     .submit-btn {
-      flex: 1;
-      padding: 12px;
+      padding: 10px;
       background: linear-gradient(to right, #667eea, #764ba2);
       color: white;
       border: none;
@@ -231,6 +247,7 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
+      font-size: 14px;
     }
     
     .submit-btn:hover {
@@ -239,8 +256,7 @@
     }
     
     .close-btn {
-      flex: 1;
-      padding: 12px;
+      padding: 10px;
       background: #f1f1f1;
       color: #666;
       border: none;
@@ -248,6 +264,7 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
+      font-size: 14px;
     }
     
     .close-btn:hover {
@@ -293,26 +310,59 @@
       }
     }
     
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
+    /* Responsive adjustments for larger screens */
+    @media (min-width: 768px) {
       .header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 20px;
+      }
+      
+      .header h1 {
+        margin-bottom: 0;
+        font-size: 28px;
+        text-align: left;
+      }
+      
+      .logout-btn {
+        width: auto;
+        padding: 12px 24px;
+      }
+      
+      .upload-btn {
+        padding: 15px 30px;
+        font-size: 16px;
+      }
+      
+      .file-list {
+        padding: 20px;
       }
       
       .file-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        flex-direction: row;
+        align-items: center;
+        padding: 15px;
       }
       
-      .file-actions {
-        align-self: flex-end;
+      .file-name {
+        font-size: 16px;
+      }
+      
+      .file-actions a {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+      
+      .modal-content {
+        padding: 40px;
+      }
+      
+      .modal-content h3 {
+        font-size: 22px;
       }
       
       .form-buttons {
-        flex-direction: column;
+        flex-direction: row;
       }
     }
   </style>
@@ -348,9 +398,7 @@
     <div class="modal" id="uploadModal">
       <div class="modal-content">
         <h3>Upload Your File</h3>
-        <!-- FIXED: Added ID to form for easier selection -->
         <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
-          <!-- FIXED: Added ID to file drop area and separate span for text -->
           <label id="fileDropArea" class="file-drop-area">
             <span id="fileLabel">Click here to select a file</span>
             <input type="file" name="file" id="fileInput" required />
