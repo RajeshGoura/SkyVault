@@ -23,7 +23,12 @@ Check out the live application: https://skyvault-9z0n.onrender.com
 
 📸 Screenshots
 Login Screen	Dashboard	File Upload
-https://via.placeholder.com/300x200.png?text=Login	https://via.placeholder.com/300x200.png?text=Dashboard	https://via.placeholder.com/300x200.png?text=Upload
+<img width="1917" height="865" alt="skyvault1" src="https://github.com/user-attachments/assets/7e537488-525b-460a-9ba8-14c8dd21a518" />
+<img width="1918" height="863" alt="skyvault2" src="https://github.com/user-attachments/assets/c1c1aa6a-dabf-4df2-a2e1-d8c1f9e7a163" />
+<img width="1917" height="865" alt="skyvault3" src="https://github.com/user-attachments/assets/d3c3a804-27e3-4e56-8d95-537ed1a8740a" />
+<img width="1917" height="867" alt="skyvault4" src="https://github.com/user-attachments/assets/2a6190b4-e950-4764-92c1-9b74ee42cfad" />
+
+	
 🛠️ Technologies Used
 Frontend:
 
