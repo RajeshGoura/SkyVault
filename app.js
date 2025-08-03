@@ -11,6 +11,8 @@ const User = require('./models/user.model');
 
 dotenv.config();
 
+
+
 // Database connection
 require('./config/db')();
 

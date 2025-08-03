@@ -1,40 +1,39 @@
-//middleware/auth.js
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 
 module.exports = async (req, res, next) => {
   try {
-    // Skip authentication for login and register routes
-    if (req.path === '/login' || req.path === '/register') {
+    // Skip auth for static files and auth routes
+    if (req.path.startsWith('/public/') || 
+        req.path === '/login' || 
+        req.path === '/register') {
       return next();
     }
 
     const token = req.cookies.token;
     
     if (!token) {
-      console.log('No token found, redirecting to login');
+      console.log('No token found');
       return res.redirect('/user/login');
     }
 
-    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded token:', decoded);
+    const user = await User.findById(decoded.id).select('-password');
 
-    // Find user and attach all methods
-    const user = await User.findById(decoded.id);
     if (!user) {
-      console.log('User not found in database');
+      console.log('User not found');
+      res.clearCookie('token');
       return res.redirect('/user/login');
     }
 
-    // Properly attach the full user model with methods
+    // Attach user to request and response
     req.user = user;
-    res.locals.user = user; // Also make available to views
+    res.locals.user = user;
     
     console.log('Authenticated user:', user.username);
     next();
   } catch (err) {
-    console.error('Authentication error:', err.message);
+    console.error('Auth error:', err.message);
     res.clearCookie('token');
     res.redirect('/user/login');
   }

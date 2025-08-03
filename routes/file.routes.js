@@ -1,10 +1,8 @@
-//routes/file.routes.js
 const express = require('express');
 const router = express.Router();
 const { uploadFile, listFiles, downloadFile } = require('../controllers/file.controller');
 const auth = require('../middleware/auth');
-const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = require('../config/multer'); // Import the multer config
 
 // Debug middleware
 router.use((req, res, next) => {
@@ -16,37 +14,30 @@ router.use((req, res, next) => {
 // Home page with file list
 router.get('/home', auth, async (req, res) => {
   try {
-    if (!req.user) {
-      console.error('No user found in request');
-      return res.redirect('/user/login');
-    }
-
-    console.log('Rendering home page for:', req.user.username);
-    
-    // Get files using the user method
     const files = await req.user.getFiles();
-    console.log('Files found:', files.length);
-
+    
     res.render('home', {
       user: req.user,
       files: files || [],
-      loginSuccess: req.session.loginSuccess || false,
-      uploadSuccess: req.session.uploadSuccess || false
+      loginSuccess: req.session.loginSuccess,
+      uploadSuccess: req.session.uploadSuccess
     });
 
     // Clear session messages
-    if (req.session) {
-      req.session.loginSuccess = false;
-      req.session.uploadSuccess = false;
-    }
+    req.session.loginSuccess = false;
+    req.session.uploadSuccess = false;
   } catch (err) {
-    console.error('Home route error:', err);
+    console.error('Home error:', err);
     res.status(500).render('error', { error: 'Failed to load files' });
   }
 });
 
-// File upload
-router.post('/upload', auth, upload.single('file'), uploadFile);
+// Fixed file upload route with proper middleware order
+router.post('/upload', 
+  auth, // Authentication first
+  upload.single('file'), // Then file processing
+  uploadFile // Then controller
+);
 
 // File download
 router.get('/download/:id', auth, downloadFile);

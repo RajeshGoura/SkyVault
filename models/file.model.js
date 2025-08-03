@@ -1,3 +1,4 @@
+//models/file.model.js
 const mongoose = require('mongoose');
 
 const fileSchema = new mongoose.Schema({
@@ -7,7 +8,8 @@ const fileSchema = new mongoose.Schema({
   },
   path: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   size: {
     type: Number,
@@ -25,5 +27,9 @@ const fileSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Add index for faster queries
+fileSchema.index({ owner: 1 });
+fileSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('File', fileSchema);
