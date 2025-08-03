@@ -3,9 +3,7 @@ SkyVault - Secure Cloud Storage Solution
 
 A modern, secure cloud storage application built with Node.js, MongoDB, and Supabase Storage. Store, manage, and share your files with ease.
 
-https://render.com/images/deploy-to-render-button.svg
-https://img.shields.io/github/last-commit/yourusername/skyvault
-https://img.shields.io/github/license/yourusername/skyvault
+
 
 ✨ Features
 Secure Authentication - JWT-based login system
@@ -59,14 +57,18 @@ Clone the repository:
 
 bash
 git clone https://github.com/RajeshGoura/SkyVault.git
+
 cd skyvault
 Install dependencies:
+
 bash
 npm install
 
 Set up environment variables:
+
 bash
 cp .env.example .env
+
 Then edit .env with your credentials
 
 Start the development server:
@@ -111,7 +113,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ✉️ Contact
 Your Name -  rajeshgoura96@gmail.com
 
-Project Link: https://github.com/yourusername/skyvault
+Project Link: https://github.com/RajeshGoura/SkyVault
 
 🙏 Acknowledgments
 Render.com for hosting
